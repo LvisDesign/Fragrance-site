@@ -13,6 +13,7 @@ import {
   Ship,
   Mail,
   Headphones,
+  Sparkles,
 } from "lucide-react";
 
 export const CONTACT_LINKS = {
