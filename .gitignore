@@ -1,0 +1,34 @@
+# Dependencies
+**/node_modules/
+.pnp
+.pnp.js
+
+# Environment / Sensitive Secrets
+.env
+.env.*
+!.env.example
+
+# Next.js Build Output & Cache
+/frontend/.next/
+/frontend/out/
+/.next/
+/out/
+
+# TypeScript & Build Caches
+*.tsbuildinfo
+next-env.d.ts
+
+# Database / Prisma
+prisma/*.db
+prisma/*.db-journal
+
+# Logs & Debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# OS & IDE Files
+.DS_Store
+.vscode/
+.idea/
+.vercel

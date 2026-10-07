@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ProductCategory {
+  PERFUME
+  BESPOKE_OIL
+  CAR_SCENT
+}
+
+enum OlfactoryFamily {
+  FRESH
+  FLORAL
+  WOODY
+  AMBER_GOURMAND
+}
+
+enum FormulationTier {
+  EXTRAIT_DE_PARFUM
+  EDP
+  EDT
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum FulfillmentStatus {
+  PLACED
+  PREPARING
+  SHIPPED
+  DELIVERED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String?
+  fullName     String
+  phone        String?
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders Order[]
+
+  @@map("users")
+}
+
+model Product {
+  id              String          @id @default(uuid())
+  name            String
+  slug            String          @unique
+  category        ProductCategory @default(PERFUME)
+  olfactoryFamily OlfactoryFamily @default(FRESH)
+  formulationTier FormulationTier @default(EDP)
+  priceNGN        Float
+  stockQuantity   Int             @default(0)
+  images          String[]
+  isAvailable     Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id                String            @id @default(uuid())
+  trackingCode      String            @unique
+  userId            String?
+  user              User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerEmail     String
+  customerName      String
+  customerPhone     String?
+  shippingAddress   Json
+  totalAmount       Float
+  paymentStatus     PaymentStatus     @default(PENDING)
+  fulfillmentStatus FulfillmentStatus @default(PLACED)
+  paymentReference  String            @unique
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  items OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  quantity  Int
+  unitPrice Float
+
+  @@map("order_items")
+}
